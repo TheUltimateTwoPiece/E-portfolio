@@ -6,8 +6,8 @@ import { projects, pageContent } from "@/lib/data";
 const projectsCopy = pageContent.projects;
 
 export const metadata = {
-  title: "Projects",
-  description: "Three real systems I built: Homework Board, Meal Planning App, and the robotic arm.",
+  title: projectsCopy.metaTitle,
+  description: projectsCopy.metaDescription,
 };
 
 export default function ProjectsPage() {

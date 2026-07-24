@@ -8,8 +8,8 @@ import { hobbies, pageContent } from "@/lib/data";
 const hobbiesCopy = pageContent.hobbies;
 
 export const metadata = {
-  title: "Hobbies",
-  description: "Piano and swimming. The two hobbies that keep the soldering iron from getting all of me.",
+  title: hobbiesCopy.metaTitle,
+  description: hobbiesCopy.metaDescription,
 };
 
 export default function HobbiesPage() {

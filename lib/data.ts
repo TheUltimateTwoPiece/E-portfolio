@@ -36,6 +36,9 @@ export const identity = {
   shortName: "Hemanth",
   school: "SST Singapore",
   yearLabel: "Secondary 1",
+  // Short tagline used in the browser tab and OpenGraph defaults.
+  // (The longer `role` below is still here for body copy.)
+  shortRole: "Robotics maker",
   role: "Robotics Maker · Python Programmer",
   oneLine: "I build robots because it's fun. I started when I was nine.",
   email: "kakarla_hemanth_reddy@s2026.ssts.edu.sg",
@@ -422,6 +425,9 @@ export const liveBits = [
 // =============================================================
 export const pageContent = {
   home: {
+    // / uses the layout's default metadata (it is "use client" and can't
+    // export its own). To tweak the home tab/snippet, edit identity.shortRole,
+    // identity.school, and identity.oneLine above; the layout picks those up.
     bioEyebrow: "01 · at a glance",
     // Plain object so the JSX side is straight-forward.
     bioTitle: {
@@ -547,6 +553,9 @@ export const pageContent = {
   },
 
   cca: {
+    // Browser tab + search snippet for /cca.
+    metaTitle: "Robotics CCA",
+    metaDescription: `What ${cca.role.split(" · ")[0]} actually looks like at ${cca.school}.`,
     heroEyebrow: "01 · CCA",
     heroTitle: {
       pre: "Robotics ",
@@ -572,6 +581,9 @@ export const pageContent = {
   },
 
   projects: {
+    // Browser tab + search snippet for /projects.
+    metaTitle: "Projects",
+    metaDescription: "Three real systems I built: Homework Board, Meal Planning App, and the robotic arm.",
     heroEyebrow: "02 · Projects",
     heroTitle: {
       pre: "Three things I ",
@@ -589,6 +601,9 @@ export const pageContent = {
   },
 
   achievements: {
+    // Browser tab + search snippet for /achievements.
+    metaTitle: "Achievements",
+    metaDescription: "Robotics wins from CCA, plus a few other things I'm proud of.",
     heroEyebrow: "03 · achievements",
     heroTitle: {
       line1: { pre: "What I've ", accent: "won", post: "," },
@@ -616,6 +631,9 @@ export const pageContent = {
   },
 
   hobbies: {
+    // Browser tab + search snippet for /hobbies.
+    metaTitle: "Hobbies",
+    metaDescription: "Piano and swimming. The two hobbies that keep the soldering iron from getting all of me.",
     heroEyebrow: "04 · hobbies",
     heroTitle: {
       pre: "The two things I do ",

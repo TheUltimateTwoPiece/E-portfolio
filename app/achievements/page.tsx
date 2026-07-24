@@ -9,8 +9,8 @@ import { roboticsWins, otherAchievements, cca, pageContent } from "@/lib/data";
 const achCopy = pageContent.achievements;
 
 export const metadata = {
-  title: "Achievements",
-  description: "Robotics wins from CCA, plus a few other things I'm proud of.",
+  title: achCopy.metaTitle,
+  description: achCopy.metaDescription,
 };
 
 export default function AchievementsPage() {

@@ -9,8 +9,8 @@ import { cca, roboticsWins, skills, pageContent } from "@/lib/data";
 const ccaCopy = pageContent.cca;
 
 export const metadata = {
-  title: "Robotics CCA",
-  description: `What ${cca.role.split(" · ")[0]} actually looks like at ${cca.school}.`,
+  title: ccaCopy.metaTitle,
+  description: ccaCopy.metaDescription,
 };
 
 export default function CCAPage() {

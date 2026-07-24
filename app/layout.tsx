@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Inter } from "next/font/google";
+import { identity, cca } from "@/lib/data";
 import "./globals.css";
 
 const mono = JetBrains_Mono({
@@ -18,17 +19,16 @@ const sans = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://example.com"),
+  // Default tab title + per-page template. Both edit via identity in lib/data.ts.
   title: {
-    default: "Hemanth · Robotics maker and software tinkerer",
-    template: "%s · Hemanth",
+    default: `${identity.firstName} · ${identity.shortRole}`,
+    template: `%s · ${identity.firstName}`,
   },
-  description:
-    "Personal portfolio of Kakarla Hemanth Reddy . secondary school student at SST Singapore who builds robots in CCA and writes full-stack apps on weekends.",
+  description: `${identity.shortRole} at ${identity.school}. ${identity.oneLine}`,
   openGraph: {
     type: "website",
-    title: "Hemanth · Robotics maker and software tinkerer",
-    description:
-      "Robotics at SST, the Homework Board for his class, the Meal Planning App and the robotic arm. Plus piano and swimming.",
+    title: `${identity.firstName} · ${identity.shortRole}`,
+    description: `${identity.shortRole} at ${identity.school}. ${identity.oneLine}`,
   },
 };
 
