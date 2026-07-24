@@ -36,9 +36,6 @@ export const identity = {
   shortName: "Hemanth",
   school: "SST Singapore",
   yearLabel: "Secondary 1",
-  // Short tagline used in the browser tab and OpenGraph defaults.
-  // (The longer `role` below is still here for body copy.)
-  shortRole: "Robotics maker",
   role: "Robotics Maker · Python Programmer",
   oneLine: "I build robots because it's fun. I started when I was nine.",
   email: "kakarla_hemanth_reddy@s2026.ssts.edu.sg",
@@ -51,7 +48,7 @@ export const identity = {
 
   // Bio paragraphs on the home page. Add or trim freely.
   bio: [
-    "I'm a Secondary 1 student at SST Singapore. Most of my time goes to Robotics CCA: schematic on one screen, Arduino on the bench, Python scripts on the laptop.",
+    "I'm a Secondary 1 student at SST Singapore. Most of my time goes to Robotics CCA: A plan in my mind , Robot on the bench, Python scripts on the laptop.",
     "I started building robots in Primary 3, at my primary school CCA, when I was nine. I'm still doing the same thing, just with better parts.",
     "Python is my main language. Outside of Python I do TypeScript for the web bits and a bit of C++ for the Arduino side when I need raw servo loops.",
   ],
@@ -67,7 +64,7 @@ export const reachLinks = [
 export const cca = {
   name: "Robotics CCA",
   school: "SST Singapore",
-  abbrev: "R-CCA",
+  abbrev: "CCA",
   role: "Member · since P3",
   // Used as the hero subtitle on /cca and the card body on / .
   blurb:
@@ -83,7 +80,7 @@ export const cca = {
     {
       tag: "WIRE",
       title: "Wiring and bench work",
-      body: "I run servo buses through an Arduino, route the wiring properly, and label the 30 AWG harness so the next person doesn't have to guess.",
+      body: "I run servo buses through an Arduino or esp32, route the wiring properly, and label the 30 AWG harness so the next person doesn't have to guess.",
     },
     {
       tag: "CODE",
@@ -93,7 +90,7 @@ export const cca = {
     {
       tag: "SHARE",
       title: "Showing the work",
-      body: "I also like building smaller web apps in Python when an idea won't leave me alone. That's where Homework Board and the Meal Planning App live.",
+      body: "I also like building smaller web apps in Typescript when an idea won't leave me alone. That's where Homework Board and the Meal Planning App live.",
     },
   ],
   // Rendered as the "what's on the bench" grid on /cca.
@@ -110,9 +107,8 @@ export const cca = {
 };
 
 // Robotics photos from the user's uploads. Captions + placements are
-// editable. Personal builds (any placement starting with "Personal")
-// live only on /achievements — the home PhotoStrip and the /cca
-// WinGallery both filter them out via isPersonalBuild() in lib/utils.ts.
+// editable. Personal-builds go on /achievements with
+// placement: "Personal build" — the home strip filters those out.
 //
 // To add a new photo:
 //   1. Drop the file in public/competitions/ (jpg / png / webp).
@@ -130,18 +126,10 @@ export const roboticsWins: Array<{
   {
     id: "robocup-2024",
     event: "RoboCup Singapore 2024",
-    placement: "Participated",
+    placement: "1st place",
     year: 2024,
     image: "/competitions/2024-robocup.png",
     blurb: "Rescue line. The line-sensor stack worked on the third revision, finally.",
-  },
-  {
-    id: "robocup-2024-after",
-    event: "RoboCup Singapore 2024 · after-hours",
-    placement: "Team photo",
-    year: 2024,
-    image: "/competitions/robocup-2024.jpg",
-    blurb: "Day three. Everyone was sunburnt. The robot still ran, which was the win.",
   },
   {
     id: "cospace-2023",
@@ -186,7 +174,7 @@ export const roboticsWins: Array<{
   {
     id: "robot-car",
     event: "Robot car · line follower",
-    placement: "Daily driver",
+    placement: "Personal build",
     year: 2024,
     image: "/competitions/robot-car.jpeg",
     blurb: "Used for line-follower drills. Goes fast enough to be a problem in the kitchen.",
@@ -207,13 +195,6 @@ export const otherAchievements: Array<{
     org: "SST Science Faculty",
     year: 2024,
     note: "Submitted the app with a 6-week waste-log dataset. Did it actually reduce waste? Mostly yes, on weeks we remembered to log.",
-  },
-  {
-    id: "cca-recognition",
-    title: "Robotics CCA · Year-end Recognition",
-    org: "SST CCA Office",
-    year: 2024,
-    note: "Recognition for contributions to the CCA's bench setup and the science fair build.",
   },
   {
     id: "homework-board-launched",
@@ -237,14 +218,14 @@ export const projects: Array<Project & {
     status: "Live in class.",
     summary:
       "A homework tracker for my class of 25 students in S1-08. Teacher posts, students tick, there's a corkboard view so the announcements don't get lost in chat. I run cron jobs to schedule reminders and email pings for upcoming deadlines. The stack is Python on the server with TypeScript on the front because that's what I'm fastest in.",
-    stack: ["FastAPI", "SQLite", "Supabase", "Next.js", "TypeScript", "cron"],
+    stack: [ "FastAPI", "SQLite", "Supabase", "Next.js", "TypeScript", "cron"],
     features: [
       "Posting flow for teachers with scheduled release times",
       "Corkboard-style main view so announcements don't fall off the page",
       "Per-student completion tracking visible to the class teacher",
       "Email reminder pipeline for upcoming deadlines",
       "Notification + comment threads under each post",
-      "Currently used weekly by S1-08 since the start of the year",
+      "Currently used weekly by S1-08 since semester 2",
     ],
     metrics: [
       { label: "Class size", value: "25 students" },
@@ -254,7 +235,6 @@ export const projects: Array<Project & {
     highlights: [
       "It's only for my class. Not the whole school, not the year level. Just S1-08.",
       "I use it every week, which is the only metric that matters.",
-      "I wrote it in Python first because that's the language I'm fastest in.",
     ],
   },
   {
@@ -289,18 +269,18 @@ export const projects: Array<Project & {
     id: "robotic-arm",
     name: "Robotic Arm",
     audience: "Built at home on my own time",
-    tagline: "Six servos, an Arduino, and a Python control loop.",
+    tagline: "Six servos, an Arduino, and a C++ control loop.",
     status: "Built for myself. Not for any competition.",
     summary:
-      "A six-servo arm built at home on my own time, not for CCA or any competition. Two MG90S and four SG90 servos driven through an L298N-style breakout, all hooked up to an Arduino Uno. I wrote the servo mapping and a Python script on the laptop that streams targets over serial for the smooth trajectories. Calibration is stored on the device so I don't have to redo it every morning.",
-    stack: ["Arduino Uno", "SG90 / MG90S servos", "L298N", "Python (control script)", "TypeScript (Web Serial panel)"],
+      "A six-servo arm built at home on my own time, not for CCA or any competition. 3 MG996r servos and 3 MG90 servos driven through an PCA9865, all hooked up to an SSTunio (esp32 and arduino combined). I wrote the servo mapping and a C++ script on the laptop that streams targets over serial for the smooth trajectories. Calibration is stored on the device so I don't have to redo it every morning.",
+    stack: ["SSTino", "MG996r / MG90S servos", "PCA9865", "C++ (control script)", "TypeScript (Web Serial panel)"],
     features: [
       "Six-channel servo control driven from an Arduino Uno",
-      "Python control script streams servo targets from the laptop",
+      "C++ control script streams servo targets from the laptop",
       "On-device calibration — saved to EEPROM, persists through power cycles",
       "Smoothed trajectory interpolation to prevent servo stall on big moves",
       "Web Serial panel to drive it from a browser tab when the laptop is too far",
-      "Pure personal project, on my own time.",
+      "No trophies, no CCA showcase, no Open House. Just a build I wanted to make.",
     ],
     metrics: [
       { label: "Servos", value: "6 channels" },
@@ -309,7 +289,7 @@ export const projects: Array<Project & {
     ],
     highlights: [
       "It was never for any competition. I just wanted a six-servo arm on my desk.",
-      "Half the firmware is in C++ on the Arduino. The other half is Python on the laptop.",
+      "Half the firmware is in C++ on the Arduino. The other half is C++ on the laptop.",
       "It breaks sometimes. I fix it. That's the loop I'm in for.",
     ],
   },
@@ -343,9 +323,10 @@ export const skills = [
     items: [
       { name: "Arduino Uno", note: "most-used board" },
       { name: "ESP32", note: "when I need WiFi" },
-      { name: "SSTuino II", note: "from CCA" },
+      { name: "SSTuino II", note: "from school" },
       { name: "L298N", note: "motor driver" },
-      { name: "Servo buses", note: "SG90 · MG90S · DS3218" },
+      { name: "PCA9865", note: "servo bus driver" },
+      { name: "Servo buses", note: "SG90 · MG90S · MG996r" },
     ],
   },
   {
@@ -387,10 +368,10 @@ export const hobbies = [
     id: "swimming",
     tag: "SWIMMING",
     title: "Swims at the public pool near home",
-    body: "I go to the public pool near my house, not the school one. Freestyle is my best stroke. I try to go twice a week and lift the count during holidays. It's the opposite of building robots: no wires, no soldering, just breathing right.",
+    body: "I go to the public pool near my housew. Freestyle is my best stroke. I try to go once a week and lift the count during holidays. It's the opposite of building robots: no wires, no soldering, just breathing right.",
     facts: [
-      { label: "Distance", value: "1.5km typical" },
-      { label: "Cadence", value: "twice a week" },
+      { label: "Distance", value: "1km typical" },
+      { label: "Cadence", value: "once a week" },
       { label: "Where", value: "public pool" },
     ],
   },
@@ -403,7 +384,7 @@ export const statusFeed = [
   "polishing Homework Board for class use",
   "labelling servo cables so they stop swapping",
   "updating the waste log so the science data isn't lying",
-  "reading docs for the Python smbus2 library",
+  "learning Swift and Xcode for Ios Apps",
   "laps at the public pool",
   "drawing a new mount in Fusion 360",
   "writing quick Python scripts to test motor speed",
@@ -426,9 +407,6 @@ export const liveBits = [
 // =============================================================
 export const pageContent = {
   home: {
-    // / uses the layout's default metadata (it is "use client" and can't
-    // export its own). To tweak the home tab/snippet, edit identity.shortRole,
-    // identity.school, and identity.oneLine above; the layout picks those up.
     bioEyebrow: "01 · at a glance",
     // Plain object so the JSX side is straight-forward.
     bioTitle: {
@@ -448,20 +426,18 @@ export const pageContent = {
     winsLink: "all wins →",
     // The scrolling marquee ribbons on the home page.
     winsMarqueeItems: [
-      "IDE Series 2025 · Participated",
-      "RoboCup Singapore 2024 · Participated",
+      "IDE Series 2025 · Made it to the finals",
+      "RoboCup Singapore 2024 · Won 1st place",
       "CoSpace Rescue 2023 · Participated",
-      "Robotic Arm · CCA Showcase",
-      "RoboCup 2024 · Sunday after-hours",
+      "Robotic Arm · Personal build",
       "Robot Car · Daily Driver",
-      "Meal Planning App · Science Practical",
-      "SST CCA · Year-end Recognition",
+      "Meal Planning App · Science Performance task",
+      "Homework Board · Class rollout",
     ],
     // Secondary marquee is greyer — UI telemetry, house-style.
-    winsSecondaryItems: [
-      "kt/sol ↓",
+    winsSecondaryItems: [,
       "i2c bus live",
-      "Arduino armed",
+      "SSTuino II armed",
       "calibration loaded",
       "servo 6 / 6",
       "tension OK",
@@ -554,9 +530,6 @@ export const pageContent = {
   },
 
   cca: {
-    // Browser tab + search snippet for /cca.
-    metaTitle: "Robotics CCA",
-    metaDescription: `What ${cca.role.split(" · ")[0]} actually looks like at ${cca.school}.`,
     heroEyebrow: "01 · CCA",
     heroTitle: {
       pre: "Robotics ",
@@ -582,9 +555,6 @@ export const pageContent = {
   },
 
   projects: {
-    // Browser tab + search snippet for /projects.
-    metaTitle: "Projects",
-    metaDescription: "Three real systems I built: Homework Board, Meal Planning App, and the robotic arm.",
     heroEyebrow: "02 · Projects",
     heroTitle: {
       pre: "Three things I ",
@@ -602,16 +572,13 @@ export const pageContent = {
   },
 
   achievements: {
-    // Browser tab + search snippet for /achievements.
-    metaTitle: "Achievements",
-    metaDescription: "Robotics wins from CCA, plus a few other things I'm proud of.",
     heroEyebrow: "03 · achievements",
     heroTitle: {
       line1: { pre: "What I've ", accent: "won", post: "," },
       line2: { pre: "and a few ", accent: "oddments", post: "." },
     },
     heroSubtitle:
-      "No certificate gallery on purpose. Robotics photos are relisted here from the CCA page. Plus the meal-planning practical, the class rollout, and a couple of school-year recognitions.",
+      "No certificate gallery on purpose. Robotics photos are relisted here from the CCA page. Plus the mean planning app and class rollout",
     chips: [
       { label: "Robotics photos", value: String(roboticsWins.length) },
       { label: "Oddments", value: String(otherAchievements.length) },
@@ -632,9 +599,6 @@ export const pageContent = {
   },
 
   hobbies: {
-    // Browser tab + search snippet for /hobbies.
-    metaTitle: "Hobbies",
-    metaDescription: "Piano and swimming. The two hobbies that keep the soldering iron from getting all of me.",
     heroEyebrow: "04 · hobbies",
     heroTitle: {
       pre: "The two things I do ",
