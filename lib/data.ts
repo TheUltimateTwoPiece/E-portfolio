@@ -110,8 +110,9 @@ export const cca = {
 };
 
 // Robotics photos from the user's uploads. Captions + placements are
-// editable. Personal-builds go on /achievements with
-// placement: "Personal build" — the home strip filters those out.
+// editable. Personal builds (any placement starting with "Personal")
+// live only on /achievements — the home PhotoStrip and the /cca
+// WinGallery both filter them out via isPersonalBuild() in lib/utils.ts.
 //
 // To add a new photo:
 //   1. Drop the file in public/competitions/ (jpg / png / webp).
@@ -236,9 +237,9 @@ export const projects: Array<Project & {
     status: "Live in class.",
     summary:
       "A homework tracker for my class of 25 students in S1-08. Teacher posts, students tick, there's a corkboard view so the announcements don't get lost in chat. I run cron jobs to schedule reminders and email pings for upcoming deadlines. The stack is Python on the server with TypeScript on the front because that's what I'm fastest in.",
-    stack: ["Python", "FastAPI", "SQLite", "Supabase", "Next.js", "TypeScript", "cron"],
+    stack: ["FastAPI", "SQLite", "Supabase", "Next.js", "TypeScript", "cron"],
     features: [
-      "Posting flow for teachers with scheduled release times (Python cron)",
+      "Posting flow for teachers with scheduled release times",
       "Corkboard-style main view so announcements don't fall off the page",
       "Per-student completion tracking visible to the class teacher",
       "Email reminder pipeline for upcoming deadlines",
@@ -299,7 +300,7 @@ export const projects: Array<Project & {
       "On-device calibration — saved to EEPROM, persists through power cycles",
       "Smoothed trajectory interpolation to prevent servo stall on big moves",
       "Web Serial panel to drive it from a browser tab when the laptop is too far",
-      "No trophies, no CCA showcase, no Open House. Just a build I wanted to make.",
+      "Pure personal project, on my own time.",
     ],
     metrics: [
       { label: "Servos", value: "6 channels" },

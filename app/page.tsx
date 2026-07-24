@@ -19,6 +19,7 @@ import {
   otherAchievements,
   pageContent,
 } from "@/lib/data";
+import { isPersonalBuild } from "@/lib/utils";
 
 // Hoist the home/CCA-specific data so it's easy to scan. The whole
 // home composition is driven by these three objects plus identity.
@@ -264,10 +265,8 @@ function WinsMarquee() {
 function PhotoStrip() {
   // Only competition / event photos here. Personal-build arm photos live on
   // /achievements, where the captions make their context clear.
-  const CompetitionLike = (p: string) =>
-    p.toLowerCase().startsWith("personal") ? null : p;
   const photos = roboticsWins
-    .filter((w) => w.image && CompetitionLike(w.placement))
+    .filter((w) => w.image && !isPersonalBuild(w.placement))
     .slice(0, 6);
   return (
     <section className="py-12 px-5 md:px-10 max-w-7xl mx-auto">

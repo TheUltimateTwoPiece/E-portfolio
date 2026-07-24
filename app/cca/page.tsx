@@ -5,6 +5,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { WinGallery } from "@/components/wins/WinGallery";
 import { CornerBrackets } from "@/components/ui/CornerMarks";
 import { cca, roboticsWins, skills, pageContent } from "@/lib/data";
+import { isPersonalBuild } from "@/lib/utils";
 
 const ccaCopy = pageContent.cca;
 
@@ -109,7 +110,10 @@ export default function CCAPage() {
             {ccaCopy.winsLink}
           </Link>
         </div>
-        <WinGallery wins={roboticsWins} cols={3} />
+        <WinGallery
+          wins={roboticsWins.filter((w) => !isPersonalBuild(w.placement))}
+          cols={3}
+        />
       </section>
 
       <BackToHome />
