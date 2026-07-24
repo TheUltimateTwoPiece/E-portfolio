@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
+  <!-- PLACEHOLDER LOGO. Replace this file with your actual logo.
+       Recommendation: viewBox should match your artwork (this one is 240x80). -->
+  <rect x="2" y="2" width="236" height="76" fill="#0d1117" stroke="#eab308" stroke-opacity="0.4"/>
+  <!-- Corner brackets -->
+  <path d="M8 8 L18 8 M8 8 L8 18" stroke="#eab308" stroke-width="1.4"/>
+  <path d="M232 8 L222 8 M232 8 L232 18" stroke="#eab308" stroke-width="1.4"/>
+  <path d="M8 72 L18 72 M8 72 L8 62" stroke="#eab308" stroke-width="1.4"/>
+  <path d="M232 72 L222 72 M232 72 L232 62" stroke="#eab308" stroke-width="1.4"/>
+  <!-- Stylized "ST." monogram suggesting maker-tech energy -->
+  <text x="46" y="52" font-family="JetBrains Mono, monospace" font-weight="700" font-size="36" fill="#e6edf3">ST</text>
+  <text x="46" y="52" font-family="JetBrains Mono, monospace" font-weight="700" font-size="36" fill="#eab308">.</text>
+  <!-- Solder pads -->
+  <circle cx="22" cy="40" r="2.4" fill="#eab308"/>
+  <circle cx="218" cy="40" r="2.4" fill="#eab308"/>
+  <!-- Subtle circuit traces -->
+  <path d="M22 40 L40 40 L40 30 L60 30" stroke="#eab308" stroke-opacity="0.5" stroke-width="1"/>
+  <path d="M218 40 L200 40 L200 50 L180 50" stroke="#eab308" stroke-opacity="0.5" stroke-width="1"/>
+  <!-- Component labels -->
+  <text x="46" y="68" font-family="JetBrains Mono, monospace" font-size="8" fill="#7a859a" letter-spacing="2">PLACEHOLDER · SWAP ME</text>
+</svg>
