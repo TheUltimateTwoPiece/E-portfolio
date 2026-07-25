@@ -7,23 +7,24 @@ import { cn } from "@/lib/utils";
  * sits behind every page without re-rendering across nav routes.
  *
  * Layers (back to front):
- *  L1 - fine dot grid                (.bg-dot-grid utility)
- *  L2 - orthogonal copper traces     (8 SVG paths, hand-curated, static)
- *  L3 - signal-flow on 2 traces       (animated stroke-dashoffset, hidden on mobile)
- *  L4 - via dots at intersections     (top + bottom of each via)
- *  L5 - component silkscreen labels   (U1, R12, C3, JP2 … monospace, sparse)
- *  L6 - corner fiducials              (4 corners, faint pulse)
+ *  L1 - fine dot grid                       (.bg-dot-grid utility)
+ *  L2 - orthogonal copper traces (bright)   (8 SVG paths, hand-curated, static)
+ *  L3 - copper accent traces                (2 SVG paths, slightly thicker & warmer)
+ *  L4 - signal-flow on 2 traces             (animated stroke-dashoffset)
+ *  L5 - via dots                            (outer ring + bright gold inner pip)
+ *  L6 - chip + keeout silkscreen outlines   (small rects representing SOIC/QFP pads)
+ *  L7 - silkscreen component labels         (U1, R12 … monospace, all 8 visible)
+ *  L8 - corner fiducials                     (4 corners, visible everywhere)
+ *  L9 - top + bottom soft edge fade         (low-opacity to keep edges clean)
  *
- * Mobile (≤ md): lower opacity, no animation, fewer labels.
- * prefers-reduced-motion: animation layer is `motion-safe` only.
+ * prefers-reduced-motion: pulse + flow animations drop; everything else still reads.
  */
 export interface PCBSchematicBgProps {
-  /** Spare-noise int for sketches. `lifted` makes the bg more visible. */
   intensity?: "subtle" | "default" | "lifted";
   className?: string;
 }
 
-/** Copper trace — a 2D polyline path with right-angle bends, like a real PCB. */
+/** Sulphate-copper primary traces - hair-line hairlines on the dark substrate. */
 const TRACE_PATHS: ReadonlyArray<string> = [
   "M-40 80 H260 V200 H580 V340 H1040",
   "M-40 320 H180 V160 H540 V260 H900",
@@ -35,7 +36,13 @@ const TRACE_PATHS: ReadonlyArray<string> = [
   "M0 600 H220 V680 H560 V780 H1040",
 ];
 
-/** Two traces get the gold signal-flow overlay. */
+/** Two traces get a thicker copper accent for colour variety. */
+const COPPER_TRACES: ReadonlyArray<string> = [
+  "M-40 220 H160 V280 H420 V360 H1040",
+  "M880 -40 V120 H660 V260 H440 V380",
+];
+
+/** Two long traces get the gold signal flow overlay. */
 const FLOW_TRACE_PATHS: ReadonlyArray<{ d: string; delay: string }> = [
   { d: "M-40 240 H260 V340 H560 V440 H1040", delay: "-0s" },
   { d: "M80 -40 V160 H200 V280 H800 V400 V620", delay: "-3.5s" },
@@ -57,8 +64,8 @@ const VIAS: ReadonlyArray<{ x: number; y: number }> = [
   { x: 940, y: 600 },
 ];
 
-/** Silkscreen component reference designators (U1, R12 …). */
-const SILK_LABELS: ReadonlyArray<{ x: number; y: number; label: string }> = [
+/** Silkscreen component reference designators (U1, R12 ...). */
+const SILK_LABELS: ReadonlyArray<{ x: number; y: string | number; label: string }> = [
   { x: 80, y: 50, label: "U1" },
   { x: 920, y: 70, label: "R12" },
   { x: 120, y: 240, label: "C3" },
@@ -69,55 +76,86 @@ const SILK_LABELS: ReadonlyArray<{ x: number; y: number; label: string }> = [
   { x: 880, y: 540, label: "IC7" },
 ];
 
+/** Small chip outline rectangles . looking like QFP/SOIC footprints. */
+const CHIP_OUTLINES: ReadonlyArray<{ x: number; y: number; w: number; h: number }> = [
+  { x: 700, y: 30, w: 90, h: 50 },   // top-right SOIC
+  { x: 90, y: 280, w: 70, h: 50 },    // mid-left chip
+  { x: 580, y: 460, w: 110, h: 60 },  // bottom MCU
+];
+
 export function PCBSchematicBg({
   intensity = "default",
   className,
 }: PCBSchematicBgProps) {
-  const op =
-    intensity === "subtle" ? "opacity-70" : intensity === "lifted" ? "opacity-100" : "opacity-85";
+  // Drop the global opacity wrapper - the bg is calibrated to read at full opacity
+  // and intensity handles come from local colour/opacity instead of layer-mul.
+  const labelOpacity =
+    intensity === "subtle" ? 0.5 : intensity === "lifted" ? 0.85 : 0.7;
 
   return (
     <div
       aria-hidden
       className={cn(
         "fixed inset-0 -z-10 pointer-events-none overflow-hidden",
-        op,
         className,
       )}
     >
-      {/* L1 — fine dot grid (existing utility) */}
+      {/* L1 - fine dot grid */}
       <div className="absolute inset-0 bg-dot-grid" />
 
-      {/* L2-L5 — SVG schematics */}
+      {/* L2-L7 - SVG schematic */}
       <svg
         viewBox="0 0 1000 600"
         preserveAspectRatio="xMidYMid slice"
         className="absolute inset-0 w-full h-full"
       >
         <defs>
-          {/* Gold gradient for the animated signal flow */}
+          {/* Gold horizontal gradient for the animated signal flow */}
           <linearGradient id="pcb-flow" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stopColor="#eab308" stopOpacity="0" />
             <stop offset="0.5" stopColor="#eab308" stopOpacity="1" />
             <stop offset="1" stopColor="#eab308" stopOpacity="0" />
           </linearGradient>
+          {/* Subtle radial vignette behind the bg so the centre area is the brightest */}
+          <radialGradient id="pcb-vignette" cx="50%" cy="50%" r="70%">
+            <stop offset="0" stopColor="#000" stopOpacity="0.55" />
+            <stop offset="1" stopColor="#000" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
-        {/* L2 — static copper traces */}
-        <g stroke="#21262d" fill="none" strokeLinejoin="miter" strokeLinecap="square">
+        {/* L2 - primary copper traces (bright hair-lines) */}
+        <g
+          stroke="#3d4757"
+          fill="none"
+          strokeLinejoin="miter"
+          strokeLinecap="square"
+        >
           {TRACE_PATHS.map((d, i) => (
-            <path key={`t-${i}`} d={d} strokeWidth={i % 4 === 0 ? "1.4" : "1"} />
+            <path key={`t-${i}`} d={d} strokeWidth={i % 4 === 0 ? "1.6" : "1.2"} />
           ))}
         </g>
 
-        {/* L3 — animated signal-flow on long traces (desktop only) */}
+        {/* L3 - copper accent traces (warmer, slightly thicker) */}
+        <g
+          stroke="#d97706"
+          strokeOpacity="0.65"
+          fill="none"
+          strokeLinejoin="miter"
+          strokeLinecap="square"
+        >
+          {COPPER_TRACES.map((d, i) => (
+            <path key={`c-${i}`} d={d} strokeWidth="1.8" />
+          ))}
+        </g>
+
+        {/* L4 - animated signal-flow (gold dashed overlay, desktop only) */}
         <g className="hidden md:block motion-safe:animate-trace-flow">
           {FLOW_TRACE_PATHS.map(({ d, delay }, i) => (
             <path
               key={`f-${i}`}
               d={d}
               stroke="url(#pcb-flow)"
-              strokeWidth="1.6"
+              strokeWidth="1.8"
               strokeLinecap="round"
               strokeDasharray="6 18"
               fill="none"
@@ -126,52 +164,76 @@ export function PCBSchematicBg({
           ))}
         </g>
 
-        {/* L4 — via dots */}
+        {/* L5 - via dots (brighter gold pip + ring on dark substrate) */}
         <g>
           {VIAS.map(({ x, y }, i) => (
             <g key={`v-${i}`}>
-              <circle cx={x} cy={y} r="3.2" fill="#08090c" stroke="#30363d" strokeWidth="0.8" />
-              <circle cx={x} cy={y} r="1.4" fill="#eab308" opacity="0.55" />
+              <circle cx={x} cy={y} r="4" fill="#08090c" stroke="#3d4757" strokeWidth="1.2" />
+              <circle cx={x} cy={y} r="2" fill="#eab308" opacity="0.95" />
             </g>
           ))}
         </g>
 
-        {/* L5 — silkscreen component labels (mobile: only 4) */}
+        {/* L6 - chip outlines (silkscreen rectangles for QFP/SOIC footprints) */}
         <g
-          fill="#7a859a"
-          fillOpacity="0.45"
+          stroke="#3d4757"
+          strokeOpacity={intensity === "subtle" ? 0.35 : 0.55}
+          strokeWidth="1"
+          strokeDasharray="4 3"
+          fill="none"
+        >
+          {CHIP_OUTLINES.map(({ x, y, w, h }, i) => (
+            <rect key={`co-${i}`} x={x} y={y} width={w} height={h} />
+          ))}
+        </g>
+        {/* Faint pad dots along the chip outlines to look like IC pin pads */}
+        <g fill="#eab308" opacity="0.55">
+          {CHIP_OUTLINES.flatMap(({ x, y, w, h }, i) => {
+            const pinCount = i === 2 ? 6 : 4;
+            const pins = [];
+            const stepX = w / (pinCount + 1);
+            for (let p = 1; p <= pinCount; p++) {
+              pins.push(
+                <circle
+                  key={`co-${i}-p-${p}`}
+                  cx={x + stepX * p}
+                  cy={y + h + 4}
+                  r={1.6}
+                />,
+              );
+            }
+            return pins;
+          })}
+        </g>
+
+        {/* L7 - silkscreen component labels - all 8 visible always */}
+        <g
+          fill="#cbd5e1"
+          fillOpacity={labelOpacity}
           fontFamily="ui-monospace, monospace"
-          fontSize="10"
+          fontSize="11"
+          letterSpacing="0.18em"
         >
           {SILK_LABELS.map(({ x, y, label }, i) => (
-            <text
-              key={`s-${i}`}
-              x={x}
-              y={y}
-              textAnchor="middle"
-              className={cn(i >= 4 && "hidden md:inline")}
-            >
+            <text key={`s-${i}`} x={x} y={y} textAnchor="middle">
               {label}
             </text>
           ))}
         </g>
 
-        {/* Silkscreen outline around a few areas (looks like a real PCB keepout) */}
-        <g stroke="#30363d" strokeOpacity="0.35" strokeDasharray="3 4" fill="none">
-          <rect x="540" y="320" width="220" height="120" />
-          <rect x="120" y="380" width="180" height="80" />
-        </g>
+        {/* Subtle radial vignette so the bg centre is the brightest area */}
+        <rect width="1000" height="600" fill="url(#pcb-vignette)" />
       </svg>
 
-      {/* L6 — corner fiducials (hidden on smallest viewport to keep edges clean) */}
+      {/* L8 - corner fiducials (always visible: small dot on mobile, full cross on desktop) */}
       <CornerFiducial position="tl" />
       <CornerFiducial position="tr" />
       <CornerFiducial position="bl" />
       <CornerFiducial position="br" />
 
-      {/* Top + bottom soft edge fade (so content edges feel clean) */}
-      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-pcb-base/60 to-transparent pointer-events-none" />
-      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-pcb-base/60 to-transparent pointer-events-none" />
+      {/* L9 - weak edge fade so content never crashes into the bg edge */}
+      <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-pcb-base/35 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-pcb-base/35 to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -190,13 +252,16 @@ function CornerFiducial({
   return (
     <span
       className={cn(
-        "absolute hidden md:block motion-safe:animate-fiducial-pulse",
+        "absolute motion-safe:animate-fiducial-pulse",
         placements[position],
       )}
     >
-      <span className="block h-2.5 w-px bg-gold/60 absolute left-1/2 top-0 -translate-x-1/2" />
-      <span className="block w-2.5 h-px bg-gold/60 absolute top-1/2 left-0 -translate-y-1/2" />
-      <span className="block h-2 w-2 rounded-full bg-gold/40 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+      {/* Full cross on desktop (≥md); small gold dot only on mobile */}
+      <span className="hidden md:block">
+        <span className="absolute left-1/2 -translate-x-1/2 top-0 block h-3 w-px bg-gold/80" />
+        <span className="absolute top-1/2 -translate-y-1/2 left-0 block w-3 h-px bg-gold/80" />
+      </span>
+      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block h-2 md:h-2.5 w-2 md:w-2.5 rounded-full bg-gold" />
     </span>
   );
 }
