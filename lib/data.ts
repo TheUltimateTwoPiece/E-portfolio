@@ -50,7 +50,7 @@ export const identity = {
   startedWhere: "primary school CCA",
 
   // Bio paragraphs on the home page. Add or trim freely.
-  bio: [    "I'm a Secondary 1 student at SST Singapore. Most of my time goes to Robotics CCA: schematic on one screen, Arduino on the bench, Python scripts on the laptop.",
+  bio: [    "I'm a Secondary 1 student at SST Singapore. Most of my time goes to Robotics CCA: A plan in my mind, Robot on the bench, Python scripts on the laptop.",
     "I started building robots in Primary 3, at my primary school CCA, when I was nine. I'm still doing the same thing, just with better parts.",
     "Python is my main language. Outside of Python I do TypeScript for the web bits and a bit of C++ for the Arduino side when I need raw servo loops.",
   ],
