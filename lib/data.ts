@@ -36,6 +36,9 @@ export const identity = {
   shortName: "Hemanth",
   school: "SST Singapore",
   yearLabel: "Secondary 1",
+  // Short tagline used in the browser tab and OpenGraph defaults.
+  // (The longer `role` below is still here for body copy.)
+  shortRole: "Robotics maker",
   role: "Robotics Maker · Python Programmer",
   oneLine: "I build robots because it's fun. I started when I was nine.",
   email: "kakarla_hemanth_reddy@s2026.ssts.edu.sg",
@@ -47,8 +50,7 @@ export const identity = {
   startedWhere: "primary school CCA",
 
   // Bio paragraphs on the home page. Add or trim freely.
-  bio: [
-    "I'm a Secondary 1 student at SST Singapore. Most of my time goes to Robotics CCA: A plan in my mind , Robot on the bench, Python scripts on the laptop.",
+  bio: [    "I'm a Secondary 1 student at SST Singapore. Most of my time goes to Robotics CCA: schematic on one screen, Arduino on the bench, Python scripts on the laptop.",
     "I started building robots in Primary 3, at my primary school CCA, when I was nine. I'm still doing the same thing, just with better parts.",
     "Python is my main language. Outside of Python I do TypeScript for the web bits and a bit of C++ for the Arduino side when I need raw servo loops.",
   ],
@@ -435,7 +437,7 @@ export const pageContent = {
       "Homework Board · Class rollout",
     ],
     // Secondary marquee is greyer — UI telemetry, house-style.
-    winsSecondaryItems: [,
+    winsSecondaryItems: [
       "i2c bus live",
       "SSTuino II armed",
       "calibration loaded",
@@ -530,6 +532,9 @@ export const pageContent = {
   },
 
   cca: {
+    // Browser tab + search snippet for /cca.
+    metaTitle: "Robotics CCA",
+    metaDescription: `What ${cca.role.split(" · ")[0]} actually looks like at ${cca.school}.`,
     heroEyebrow: "01 · CCA",
     heroTitle: {
       pre: "Robotics ",
@@ -555,6 +560,9 @@ export const pageContent = {
   },
 
   projects: {
+    // Browser tab + search snippet for /projects.
+    metaTitle: "Projects",
+    metaDescription: "Three real systems I built: Homework Board, Meal Planning App, and the robotic arm.",
     heroEyebrow: "02 · Projects",
     heroTitle: {
       pre: "Three things I ",
@@ -572,6 +580,9 @@ export const pageContent = {
   },
 
   achievements: {
+    // Browser tab + search snippet for /achievements.
+    metaTitle: "Achievements",
+    metaDescription: "Robotics wins from CCA, plus a few other things I'm proud of.",
     heroEyebrow: "03 · achievements",
     heroTitle: {
       line1: { pre: "What I've ", accent: "won", post: "," },
@@ -599,6 +610,9 @@ export const pageContent = {
   },
 
   hobbies: {
+    // Browser tab + search snippet for /hobbies.
+    metaTitle: "Hobbies",
+    metaDescription: "Piano and swimming. The two hobbies that keep the soldering iron from getting all of me.",
     heroEyebrow: "04 · hobbies",
     heroTitle: {
       pre: "The two things I do ",
