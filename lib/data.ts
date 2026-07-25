@@ -32,14 +32,14 @@
 export const identity = {
   firstName: "Hemanth",
   lastName: "Kakarla",
-  fullName: "Hemanth Kakarla",
+  fullName: "Kakarla Hemanth Reddy",
   shortName: "Hemanth",
   school: "SST Singapore",
   yearLabel: "Secondary 1",
   // Short tagline used in the browser tab and OpenGraph defaults.
   // (The longer `role` below is still here for body copy.)
   shortRole: "Robotics maker",
-  role: "Maker · Coder · Builder",
+  role: "Maker · Coder · Designer",
   oneLine: "I build robots because it's fun. I started when I was nine.",
   email: "kakarla_hemanth_reddy@s2026.ssts.edu.sg",
   phone: "+65 89449358",
@@ -98,12 +98,12 @@ export const cca = {
   // Rendered as the "what's on the bench" grid on /cca.
   equipment: [
     { label: "MCU", value: "Arduino Uno · Arduino Mega · ESP32 · SSTuino II" },
-    { label: "Driver", value: "L298N · TB6612 · on-board motor pins" },
+    { label: "Driver", value: "L298N · TB6612 · PCA9865" },
     { label: "CAD", value: "Fusion 360 (parametric parts, assemblies)" },
-    { label: "Print", value: "Bambu Lab X1 · BambuStudio profiles" },
+    { label: "Print", value: "Bambu Lab A1 · BambuStudio profiles" },
     { label: "Sensors", value: "HC-SR04 · MPU-6050 · IR line-follower" },
-    { label: "Servos", value: "SG90 · MG90S · DS3218" },
-    { label: "Materials", value: "PETG, PLA, plywood, 30 AWG silicone wire" },
+    { label: "Servos", value: "SG90 · MG90S · MG996r" },
+    { label: "Materials", value: "PETG, PLA, plywood, 22 AWG silicone wire" },
     { label: "Display", value: "TM1637 7-segment · 16x2 LCD" },
   ],
 };
@@ -153,7 +153,7 @@ export const roboticsWins: Array<{
     id: "arm-personal",
     event: "Robotic arm build · at home",
     placement: "Personal build",
-    year: 2024,
+    year: 2026,
     image: "/competitions/grabby-arm-1.jpeg",
     blurb: "Six-servo arm. Built for myself, not for any competition.",
   },
@@ -161,7 +161,7 @@ export const roboticsWins: Array<{
     id: "arm-wiring",
     event: "Robotic arm build · at home",
     placement: "Personal build",
-    year: 2024,
+    year: 2026,
     image: "/competitions/grabby-arm-2.jpeg",
     blurb: "Calibrating the arm. Brown cable is servo 1, etc. (I labelled them eventually.)",
   },
@@ -169,7 +169,7 @@ export const roboticsWins: Array<{
     id: "arm-electronics",
     event: "Robotic arm build · at home",
     placement: "Personal build",
-    year: 2024,
+    year: 2026,
     image: "/competitions/grabby-electronics.jpeg",
     blurb: "Inside the harness. L298N driver above, Arduino Uno on the right.",
   },
@@ -177,7 +177,7 @@ export const roboticsWins: Array<{
     id: "robot-car",
     event: "Robot car · line follower",
     placement: "Personal build",
-    year: 2024,
+    year: 2025,
     image: "/competitions/robot-car.jpeg",
     blurb: "Used for line-follower drills. Goes fast enough to be a problem in the kitchen.",
   },
@@ -195,14 +195,14 @@ export const otherAchievements: Array<{
     id: "meal-practical",
     title: "Meal Planning App · Science Practical",
     org: "SST Science Faculty",
-    year: 2024,
+    year: 2026,
     note: "Submitted the app with a 6-week waste-log dataset. Did it actually reduce waste? Mostly yes, on weeks we remembered to log.",
   },
   {
     id: "homework-board-launched",
     title: "Homework Board · Class rollout",
     org: "My class · S1-08",
-    year: 2024,
+    year: 2026,
     note: "Started with the 25 students in S1-08. We use it every week for homework posting and reminders.",
   },
 ];
@@ -222,9 +222,9 @@ export const projects: Array<Project & {
       "A homework tracker for my class of 25 students in S1-08. Teacher posts, students tick, there's a corkboard view so the announcements don't get lost in chat. I run cron jobs to schedule reminders and email pings for upcoming deadlines. The stack is Python on the server with TypeScript on the front because that's what I'm fastest in.",
     stack: [ "FastAPI", "SQLite", "Supabase", "Next.js", "TypeScript", "cron"],
     features: [
-      "Posting flow for teachers with scheduled release times",
+      "Posting flow for admins with scheduled release times",
       "Corkboard-style main view so announcements don't fall off the page",
-      "Per-student completion tracking visible to the class teacher",
+      "Per-student completion tracking visible to the admins",
       "Email reminder pipeline for upcoming deadlines",
       "Notification + comment threads under each post",
       "Currently used weekly by S1-08 since semester 2",
@@ -246,7 +246,7 @@ export const projects: Array<Project & {
     tagline: "Reducing food waste, one grocery list at a time.",
     status: "In active use at home.",
     summary:
-      "What started as a science project became a thing we use every week. Inventory, grocery, recipes, planning, and a waste log that I actually fill in. Gemini suggests recipes based on what's already in the fridge. Every panel exports to CSV because the whole point was to measure whether the thing works, not assume it.",
+      "What started as a submission to our science perfirmance taskbut soon it became a thing we use every week. Inventory, grocery, recipes, planning, and a waste log that I actually fill in. Gemini suggests recipes based on what's already in the fridge. Every panel exports to CSV because the whole point was to measure whether the thing works, not assume it.",
     stack: ["Next.js", "Supabase", "Gemini API", "Python", "TypeScript", "Postgres"],
     features: [
       "Inventory panel — what we actually have, with expiry awareness",
@@ -287,7 +287,7 @@ export const projects: Array<Project & {
     metrics: [
       { label: "Servos", value: "6 channels" },
       { label: "MCU", value: "Arduino Uno" },
-      { label: "Driver", value: "L298N" },
+      { label: "Driver", value: "PCA9865" },
     ],
     highlights: [
       "It was never for any competition. I just wanted a six-servo arm on my desk.",
@@ -397,7 +397,7 @@ export const liveBits = [
   { label: "School", value: "SST Singapore · Secondary 1" },
   { label: "Started building at", value: "9 · Primary 3" },
   { label: "Main language", value: "Python" },
-  { label: "Current build", value: "Robotic arm firmware" },
+  { label: "Current build", value: "Using ai camera vision to control Robot arm" },
 ];
 
 // =============================================================
@@ -432,7 +432,7 @@ export const pageContent = {
       "RoboCup Singapore 2024 · Won 1st place",
       "CoSpace Rescue 2023 · Participated",
       "Robotic Arm · Personal build",
-      "Robot Car · Daily Driver",
+      "Robot Car · Personal build",
       "Meal Planning App · Science Performance task",
       "Homework Board · Class rollout",
     ],
@@ -670,7 +670,7 @@ export const pageContent = {
 export const heroScopeLabels = {
   topLeft: "SCOPE · 50ms/div",
   topRight: "ARM.tty",
-  bottomLeft: "FREQ · 14Hz",
+  bottomLeft: "FREQ · 44Hz",
   bottomRight: "AMP · 0.55",
 };
 
