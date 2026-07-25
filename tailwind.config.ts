@@ -89,6 +89,14 @@ const config: Config = {
           "0%, 100%": { opacity: "0.45" },
           "50%": { opacity: "1" },
         },
+        "via-pulse": {
+          "0%, 100%": { opacity: "0.7" },
+          "50%": { opacity: "1" },
+        },
+        "packet-flow": {
+          from: { "offset-distance": "0%" },
+          to: { "offset-distance": "100%" },
+        },
       },
       animation: {
         "pulse-glow": "pulse-glow 2.4s ease-in-out infinite",
@@ -97,6 +105,8 @@ const config: Config = {
         "scanline": "scanline 8s linear infinite",
         "trace-flow": "trace-flow 7s linear infinite",
         "fiducial-pulse": "fiducial-pulse 4s ease-in-out infinite",
+        "via-pulse": "via-pulse 2.4s ease-in-out infinite",
+        "packet-flow": "packet-flow 6s linear infinite",
       },
       backgroundImage: {
         "dot-fine":

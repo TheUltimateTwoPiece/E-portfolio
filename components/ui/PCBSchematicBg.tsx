@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -87,7 +87,7 @@ const VIAS: ReadonlyArray<{ x: number; y: number }> = [
 ];
 
 /** Silkscreen component reference designators (U1, R12 ...). */
-const SILK_LABELS: ReadonlyArray<{ x: number; y: string | number; label: string }> = [
+const SILK_LABELS: ReadonlyArray<{ x: number; y: number; label: string }> = [
   { x: 80, y: 50, label: "U1" },
   { x: 920, y: 70, label: "R12" },
   { x: 120, y: 240, label: "C3" },
@@ -142,6 +142,29 @@ export function PCBSchematicBg({
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
+
+  // Hover-to-solder (logic-analyzer probe). On pointer-enter of any
+  // silkscreen label, briefly swaps the rendered glyphs to the 8-bit
+  // binary representation of the label's first character and overlays
+  // a copper X (the "solder probe struck through"), then settles back
+  // after 700ms. Plain state map: id -> binary-string. SSR renders
+  // nothing extra (the map starts empty), so no hydration mismatch.
+  const [tapMap, setTapMap] = useState<Record<string, string>>({});
+  const triggerLabelTap = (id: string) => {
+    setTapMap((prev) => {
+      if (prev[id]) return prev; // already tapping this label; ignore
+      const binary = id.charCodeAt(0).toString(2).padStart(8, "0");
+      setTimeout(() => {
+        setTapMap((prev2) => {
+          if (!prev2[id]) return prev2;
+          const next = { ...prev2 };
+          delete next[id];
+          return next;
+        });
+      }, 700);
+      return { ...prev, [id]: binary };
+    });
+  };
 
   return (
     <div
@@ -210,39 +233,83 @@ export function PCBSchematicBg({
           ))}
         </g>
 
-        {/* L4 - signal-flow, route-aware. Only the trace that matches the
-            current path lights up and animates; the other renders dim and
-            static. Mobile + reduced-motion still see the static dim version
-            so the bg never feels empty. */}
+        {/* L4 - signal-flow + data packets, route-aware. The active
+            FLOW_TRACE_PATHS index gets a brighter animated dashoffset
+            flow AND two bright gold "data packets" - SVG circles with
+            `offset-path: path(d)` - that scroll along the trace
+            repeatedly. Outer circle is a soft glow; inner is a bright
+            core that trails behind by 0.5s. Inactive trace stays dim
+            + static. /hobbies (activeIdx -1) leaves both dim. Mobile
+            + reduced-motion show only the static dim version. */}
         <g>
           {FLOW_TRACE_PATHS.map(({ d, delay }, i) => {
             const isActive = i === activeIdx;
             return (
-              <path
-                key={`f-${i}`}
-                d={d}
-                stroke={isActive ? "#fbbf24" : "url(#pcb-flow)"}
-                strokeOpacity={isActive ? 0.95 : 0.32}
-                strokeWidth={isActive ? 2.4 : 1.4}
-                strokeLinecap="round"
-                strokeDasharray="6 18"
-                fill="none"
-                className={cn(
-                  "hidden md:block",
-                  isActive && "motion-safe:animate-trace-flow",
+              <g key={`f-${i}`}>
+                <path
+                  d={d}
+                  stroke={isActive ? "#fbbf24" : "url(#pcb-flow)"}
+                  strokeOpacity={isActive ? 0.95 : 0.32}
+                  strokeWidth={isActive ? 2.4 : 1.4}
+                  strokeLinecap="round"
+                  strokeDasharray="6 18"
+                  fill="none"
+                  className={cn(
+                    "hidden md:block",
+                    isActive && "motion-safe:animate-trace-flow",
+                  )}
+                  style={{ animationDelay: delay }}
+                />
+                {isActive && (
+                  <>
+                    {/* Outer soft glow packet (lags slightly). Uses
+                        JSON.stringify so any quote or backslash in `d`
+                        gets escaped into a proper CSS string literal;
+                        otherwise a stray apostrophe in the path-data
+                        would silently collapse the `path()` function. */}
+                    <circle
+                      r={6}
+                      fill="#fde047"
+                      opacity={0.32}
+                      className="hidden md:block motion-safe:animate-packet-flow"
+                      style={{
+                        offsetPath: `path(${JSON.stringify(d)})`,
+                        animationDelay: "0.5s",
+                      }}
+                    />
+                    {/* Bright core packet */}
+                    <circle
+                      r={2.4}
+                      fill="#fef9c3"
+                      className="hidden md:block motion-safe:animate-packet-flow"
+                      style={{
+                        offsetPath: `path(${JSON.stringify(d)})`,
+                        animationDelay: "0s",
+                      }}
+                    />
+                  </>
                 )}
-                style={{ animationDelay: delay }}
-              />
+              </g>
             );
           })}
         </g>
 
-        {/* L5 - via dots (brighter gold pip + ring on dark substrate) */}
+        {/* L5 - via dots (bright gold pip + ring on dark substrate).
+            Inner pip animates a `via-pulse` with a 6-position stagger
+            so the 12 vias flash asynchronously, evoking data nodes
+            activating as traffic passes them. */}
         <g>
           {VIAS.map(({ x, y }, i) => (
             <g key={`v-${i}`}>
               <circle cx={x} cy={y} r="4" fill="#08090c" stroke="#3d4757" strokeWidth="1.2" />
-              <circle cx={x} cy={y} r="2" fill="#eab308" opacity="0.95" />
+              <circle
+                cx={x}
+                cy={y}
+                r="2"
+                fill="#eab308"
+                className="motion-safe:animate-via-pulse"
+                style={{ animationDelay: `${(i % 6) * 0.4}s` }}
+              />
             </g>
           ))}
         </g>
@@ -279,7 +346,13 @@ export function PCBSchematicBg({
           })}
         </g>
 
-        {/* L7 - silkscreen component labels - all 8 visible always */}
+        {/* L7 - silkscreen component labels. Hover (or pointer-down
+            on touch) triggers a "logic analyzer probe" effect: the
+            label briefly swaps to the 8-bit binary representation of
+            its first character with a copper X overlay, for ~700ms
+            before settling back. Each label has a transparent hitbox
+            ~36x20px so pointer events still fire even though the bg
+            parent is `pointer-events: none`. */}
         <g
           fill="#cbd5e1"
           fillOpacity={labelOpacity}
@@ -287,11 +360,62 @@ export function PCBSchematicBg({
           fontSize="11"
           letterSpacing="0.18em"
         >
-          {SILK_LABELS.map(({ x, y, label }, i) => (
-            <text key={`s-${i}`} x={x} y={y} textAnchor="middle">
-              {label}
-            </text>
-          ))}
+          {SILK_LABELS.map(({ x, y, label }, i) => {
+            const binary = tapMap[label];
+            return (
+              <g
+                key={`s-${i}`}
+                style={{ cursor: "pointer" }}
+                onPointerEnter={() => triggerLabelTap(label)}
+              >
+                {/* Larger transparent hitbox layer so hover lands */}
+                <rect
+                  x={x - 18}
+                  y={y - 14}
+                  width={36}
+                  height={20}
+                  fill="transparent"
+                  stroke="none"
+                  style={{ pointerEvents: "all" }}
+                />
+                {binary ? (
+                  <g>
+                    <line
+                      x1={x - 14}
+                      y1={y - 6}
+                      x2={x + 14}
+                      y2={y + 6}
+                      stroke="#f59e0b"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1={x - 14}
+                      y1={y + 6}
+                      x2={x + 14}
+                      y2={y - 6}
+                      stroke="#f59e0b"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                    />
+                    <text
+                      x={x}
+                      y={y}
+                      textAnchor="middle"
+                      fill="#fde047"
+                      fontSize="9.5"
+                    >
+                      {binary}
+                    </text>
+                  </g>
+                ) : (
+                  <text x={x} y={y} textAnchor="middle">
+                    {label}
+                  </text>
+                )}
+              </g>
+            );
+          })}
         </g>
 
         {/* Vignette overlay (covers centre with subtle dark vignette) */}
