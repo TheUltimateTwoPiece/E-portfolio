@@ -39,7 +39,7 @@ export const identity = {
   // Short tagline used in the browser tab and OpenGraph defaults.
   // (The longer `role` below is still here for body copy.)
   shortRole: "Robotics maker",
-  role: "Robotics Maker · Python Programmer",
+  role: "Maker · Coder · Builder",
   oneLine: "I build robots because it's fun. I started when I was nine.",
   email: "kakarla_hemanth_reddy@s2026.ssts.edu.sg",
   phone: "+65 89449358",
