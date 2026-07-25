@@ -6,7 +6,6 @@ import Link from "next/link";
 import { identity, heroScopeLabels, pageContent } from "@/lib/data";
 
 const home = pageContent.home;
-import { PadGrid } from "@/components/ui/PadGrid";
 import { CornerBrackets, Fiducial } from "@/components/ui/CornerMarks";
 import { StatusFeed } from "@/components/bits/StatusFeed";
 import { fadeUp, stagger } from "@/lib/motion";
@@ -41,10 +40,16 @@ export function Hero() {
       className="relative min-h-screen flex items-center overflow-hidden"
     >
       <div className="absolute inset-0">
-        <PadGrid cols={28} rows={16} litRatio={0.05} />
+        {/* The persistent PCB background already lives behind this section
+            via PageShell. Add a soft radial vignette so the hero text
+            stays legible, and a horizontal scan band near the bottom. */}
       </div>
 
       <div aria-hidden className="absolute inset-0 pointer-events-none">
+        {/* Soft vignetted fade behind the hero copy */}
+        <div className="hidden md:block absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(8,9,12,0.4)_0%,rgba(8,9,12,0.85)_75%)]" />
+        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-pcb-base/55 via-pcb-base/30 to-pcb-base/70" />
+
         <div className="absolute top-24 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
         <div className="absolute bottom-24 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
       </div>
@@ -65,7 +70,7 @@ export function Hero() {
 
             <motion.h1
               variants={fadeUp}
-              className="font-display display-tight font-bold text-[42px] sm:text-[58px] md:text-[78px] lg:text-[96px] leading-[0.92] tracking-tight text-pcb-ink"
+              className="font-display display-tight font-bold text-[34px] sm:text-[56px] md:text-[78px] lg:text-[96px] leading-[0.95] sm:leading-[0.92] tracking-tight text-pcb-ink"
             >
               <span className="block">
                 <span className="text-pcb-dim text-[14px] sm:text-[16px] font-mono mr-2 align-top">
@@ -77,7 +82,7 @@ export function Hero() {
                 Kakarla
                 <span className="text-solder animate-cursor-blink">_</span>
               </span>
-              <span className="block text-pcb-muted text-[18px] sm:text-[20px] md:text-[24px] font-display font-normal mt-4">
+              <span className="block text-pcb-muted text-[15px] sm:text-[20px] md:text-[24px] font-display font-normal mt-3 sm:mt-4 break-words">
                 /&gt; {identity.role.toLowerCase()}
               </span>
             </motion.h1>

@@ -42,7 +42,7 @@ export function PageHero({
           <Fiducial color="#eab308" size={8} />
         </motion.div>
 
-        <h1 className="font-display display-tight text-pcb-ink text-[40px] sm:text-[56px] md:text-[68px] lg:text-[80px] font-bold leading-[0.96] tracking-tight max-w-5xl">
+        <h1 className="font-display display-tight text-pcb-ink text-[32px] sm:text-[48px] md:text-[68px] lg:text-[80px] font-bold leading-[1.0] sm:leading-[0.96] tracking-tight max-w-5xl">
           {title}
         </h1>
 

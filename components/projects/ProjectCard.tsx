@@ -77,7 +77,7 @@ export function ProjectCard({
           </p>
         )}
 
-        <div className="mt-6 grid sm:grid-cols-3 gap-3">
+        <div className="mt-6 grid grid-cols-1 [@media(min-width:420px)]:grid-cols-2 sm:grid-cols-3 gap-3">
           {project.metrics.map((m, i) => (
             <div
               key={i}

@@ -58,12 +58,14 @@ export function TopNav() {
               {initials}
             </span>
           </span>
-          <span className="hidden sm:inline-flex items-center gap-2">
-            <span className="mono-label">//</span>
-            <span className="group-hover:text-gold transition-colors">
+          <span className="inline-flex items-center gap-1.5 sm:gap-2">
+            <span className="mono-label hidden sm:inline">//</span>
+            <span className="font-display text-sm font-bold text-pcb-ink group-hover:text-gold transition-colors">
               {identity.firstName}
             </span>
-            <span className="text-pcb-dim text-[12px]">{identity.lastName}</span>
+            <span className="hidden sm:inline text-pcb-dim text-[12px]">
+              {identity.lastName}
+            </span>
             <span className="font-mono text-[10px] text-gold animate-cursor-blink">
               _
             </span>

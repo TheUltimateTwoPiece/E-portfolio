@@ -81,12 +81,22 @@ const config: Config = {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(100%)" },
         },
+        "trace-flow": {
+          "0%": { strokeDashoffset: "0" },
+          "100%": { strokeDashoffset: "-240" },
+        },
+        "fiducial-pulse": {
+          "0%, 100%": { opacity: "0.45" },
+          "50%": { opacity: "1" },
+        },
       },
       animation: {
         "pulse-glow": "pulse-glow 2.4s ease-in-out infinite",
         "cursor-blink": "cursor-blink 1s steps(2) infinite",
         "wave-drift": "wave-drift 30s linear infinite",
         "scanline": "scanline 8s linear infinite",
+        "trace-flow": "trace-flow 7s linear infinite",
+        "fiducial-pulse": "fiducial-pulse 4s ease-in-out infinite",
       },
       backgroundImage: {
         "dot-fine":

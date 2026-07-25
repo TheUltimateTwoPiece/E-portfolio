@@ -2,6 +2,7 @@
 
 import { TopNav } from "@/components/nav/TopNav";
 import { Footer } from "@/components/Footer";
+import { PCBSchematicBg } from "@/components/ui/PCBSchematicBg";
 import { cn } from "@/lib/utils";
 
 export function PageShell({
@@ -15,6 +16,8 @@ export function PageShell({
 }) {
   return (
     <>
+      {/* Persistent PCB-silkscreen background. Sits behind every page. */}
+      <PCBSchematicBg />
       <TopNav />
       <main className={cn("relative min-h-screen", className)}>{children}</main>
       {withFooter && <Footer />}
