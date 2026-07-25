@@ -46,9 +46,12 @@ export function Hero() {
       </div>
 
       <div aria-hidden className="absolute inset-0 pointer-events-none">
-        {/* Soft vignetted fade behind the hero copy */}
-        <div className="hidden md:block absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(8,9,12,0.4)_0%,rgba(8,9,12,0.85)_75%)]" />
-        <div className="md:hidden absolute inset-0 bg-gradient-to-b from-pcb-base/55 via-pcb-base/30 to-pcb-base/70" />
+        {/* Subtle hero copy legibility wash — just enough to keep text clear
+            without smothering the persistent PCB background. The PCB bg is
+            dark on dark, but a 15–30 % wash on the hero centre keeps long
+            titles from sitting on a busy trace. */}
+        <div className="hidden md:block absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(8,9,12,0.15)_0%,rgba(8,9,12,0.45)_75%)]" />
+        <div className="md:hidden absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(8,9,12,0.2)_0%,rgba(8,9,12,0.55)_75%)]" />
 
         <div className="absolute top-24 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
         <div className="absolute bottom-24 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />

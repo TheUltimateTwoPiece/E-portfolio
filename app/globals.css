@@ -18,6 +18,11 @@
 
   body {
     font-feature-settings: "ss01", "cv11", "kern";
+    /* Make body its own stacking context so the fixed PCB background
+       (rendered at -z-10 by PageShell) stacks against body rather than
+       sinking behind body's own background-color painting. Without this
+       the background disappears under the page-color fill. */
+    isolation: isolate;
   }
 
   ::selection {

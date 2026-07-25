@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -10,14 +12,19 @@ import { cn } from "@/lib/utils";
  *  L1 - fine dot grid                       (.bg-dot-grid utility)
  *  L2 - orthogonal copper traces (bright)   (8 SVG paths, hand-curated, static)
  *  L3 - copper accent traces                (2 SVG paths, slightly thicker & warmer)
- *  L4 - signal-flow on 2 traces             (animated stroke-dashoffset)
+ *  L4 - signal-flow on 2 traces, route-aware (animated dashoffset on the
+ *        trace whose index matches ROUTE_SIGNAL_MAP[pathname]; the other
+ *        trace stays static at low opacity)
  *  L5 - via dots                            (outer ring + bright gold inner pip)
  *  L6 - chip + keeout silkscreen outlines   (small rects representing SOIC/QFP pads)
- *  L7 - silkscreen component labels         (U1, R12 … monospace, all 8 visible)
- *  L8 - corner fiducials                     (4 corners, visible everywhere)
- *  L9 - top + bottom soft edge fade         (low-opacity to keep edges clean)
+ *  L7 - silkscreen component labels         (U1, R12 ... monospace, all 8 visible)
+ *  L8 - top + bottom soft edge fade         (low-opacity to keep edges clean)
+ *  L9 - corner fiducials                     (4 corners, faint pulse)
+ *  L10 - cursor flashlight reveal           (CSS-var-driven radial; desktop only)
  *
- * prefers-reduced-motion: pulse + flow animations drop; everything else still reads.
+ * prefers-reduced-motion: pulse + flow animations drop; the flashlight
+ * still tracks the cursor (it's positional, not animated). All other
+ * layers remain rendered statically.
  */
 export interface PCBSchematicBgProps {
   intensity?: "subtle" | "default" | "lifted";
@@ -42,11 +49,26 @@ const COPPER_TRACES: ReadonlyArray<string> = [
   "M880 -40 V120 H660 V260 H440 V380",
 ];
 
-/** Two long traces get the gold signal flow overlay. */
+/** Two long traces get the gold signal flow overlay (one animated at a time). */
 const FLOW_TRACE_PATHS: ReadonlyArray<{ d: string; delay: string }> = [
   { d: "M-40 240 H260 V340 H560 V440 H1040", delay: "-0s" },
   { d: "M80 -40 V160 H200 V280 H800 V400 V620", delay: "-3.5s" },
 ];
+
+/**
+ * Per-route signal map. -1 means no route is active; both flow traces
+ * render dim and static. Maps to FLOW_TRACE_PATHS index. Every page the
+ * user lands on picks ONE trace to light up so navigation feels like
+ * flipping a switch on a real PCB.
+ */
+const ROUTE_SIGNAL_MAP: Record<string, number> = {
+  "/": 0,
+  "/cca": 1,
+  "/projects": 0,
+  "/achievements": 1,
+  "/hobbies": -1,
+  "/contact": 0,
+};
 
 /** Hand-picked via junctions (copper pads with drills). */
 const VIAS: ReadonlyArray<{ x: number; y: number }> = [
@@ -76,7 +98,7 @@ const SILK_LABELS: ReadonlyArray<{ x: number; y: string | number; label: string 
   { x: 880, y: 540, label: "IC7" },
 ];
 
-/** Small chip outline rectangles . looking like QFP/SOIC footprints. */
+/** Small chip outline rectangles — looking like QFP/SOIC footprints. */
 const CHIP_OUTLINES: ReadonlyArray<{ x: number; y: number; w: number; h: number }> = [
   { x: 700, y: 30, w: 90, h: 50 },   // top-right SOIC
   { x: 90, y: 280, w: 70, h: 50 },    // mid-left chip
@@ -87,18 +109,58 @@ export function PCBSchematicBg({
   intensity = "default",
   className,
 }: PCBSchematicBgProps) {
-  // Drop the global opacity wrapper - the bg is calibrated to read at full opacity
+  // Drop the global opacity wrapper — the bg is calibrated to read at full opacity
   // and intensity handles come from local colour/opacity instead of layer-mul.
   const labelOpacity =
     intensity === "subtle" ? 0.5 : intensity === "lifted" ? 0.85 : 0.7;
 
+  const rootRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname() ?? "/";
+  const activeIdx = ROUTE_SIGNAL_MAP[pathname] ?? 0;
+
+  // L10 - cursor flashlight. Updates CSS variables on the root div on
+  // every mouse move. SSR-safe initial values live in the style prop on
+  // the root div, so the post-mount setProperty calls were dropped in
+  // favour of that. Coarse pointer devices (touch) skip the listener
+  // early so nothing fires on mobile.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse)").matches
+    ) {
+      return;
+    }
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      root.style.setProperty("--cursor-x", x.toFixed(2) + "%");
+      root.style.setProperty("--cursor-y", y.toFixed(2) + "%");
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
   return (
     <div
+      ref={rootRef}
       aria-hidden
       className={cn(
         "fixed inset-0 -z-10 pointer-events-none overflow-hidden",
         className,
       )}
+      style={
+        {
+          // SSR-safe initial values for the cursor flashlight gradient.
+          // Without these, the element renders pre-hydration without the
+          // vars; CSS-side var fallbacks handle it, but this guarantees
+          // a clean first paint and removes the post-hydration jump.
+          "--cursor-x": "50%",
+          "--cursor-y": "30%",
+        } as React.CSSProperties
+      }
     >
       {/* L1 - fine dot grid */}
       <div className="absolute inset-0 bg-dot-grid" />
@@ -148,20 +210,31 @@ export function PCBSchematicBg({
           ))}
         </g>
 
-        {/* L4 - animated signal-flow (gold dashed overlay, desktop only) */}
-        <g className="hidden md:block motion-safe:animate-trace-flow">
-          {FLOW_TRACE_PATHS.map(({ d, delay }, i) => (
-            <path
-              key={`f-${i}`}
-              d={d}
-              stroke="url(#pcb-flow)"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeDasharray="6 18"
-              fill="none"
-              style={{ animationDelay: delay }}
-            />
-          ))}
+        {/* L4 - signal-flow, route-aware. Only the trace that matches the
+            current path lights up and animates; the other renders dim and
+            static. Mobile + reduced-motion still see the static dim version
+            so the bg never feels empty. */}
+        <g>
+          {FLOW_TRACE_PATHS.map(({ d, delay }, i) => {
+            const isActive = i === activeIdx;
+            return (
+              <path
+                key={`f-${i}`}
+                d={d}
+                stroke={isActive ? "#fbbf24" : "url(#pcb-flow)"}
+                strokeOpacity={isActive ? 0.95 : 0.32}
+                strokeWidth={isActive ? 2.4 : 1.4}
+                strokeLinecap="round"
+                strokeDasharray="6 18"
+                fill="none"
+                className={cn(
+                  "hidden md:block",
+                  isActive && "motion-safe:animate-trace-flow",
+                )}
+                style={{ animationDelay: delay }}
+              />
+            );
+          })}
         </g>
 
         {/* L5 - via dots (brighter gold pip + ring on dark substrate) */}
@@ -221,19 +294,35 @@ export function PCBSchematicBg({
           ))}
         </g>
 
-        {/* Subtle radial vignette so the bg centre is the brightest area */}
+        {/* Vignette overlay (covers centre with subtle dark vignette) */}
         <rect width="1000" height="600" fill="url(#pcb-vignette)" />
       </svg>
 
-      {/* L8 - corner fiducials (always visible: small dot on mobile, full cross on desktop) */}
+      {/* L8 - weak edge fade so content never crashes into the bg edge */}
+      <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-pcb-base/35 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-pcb-base/35 to-transparent pointer-events-none" />
+
+      {/* L9 - corner fiducials (always visible: small dot on mobile, full cross on desktop) */}
       <CornerFiducial position="tl" />
       <CornerFiducial position="tr" />
       <CornerFiducial position="bl" />
       <CornerFiducial position="br" />
 
-      {/* L9 - weak edge fade so content never crashes into the bg edge */}
-      <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-pcb-base/35 to-transparent pointer-events-none" />
-      <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-pcb-base/35 to-transparent pointer-events-none" />
+      {/* L10 - cursor flashlight reveal. CSS-variable-driven radial that
+          follows the mouse on desktop; mixBlendMode: screen so it BRIGHTENS
+          the underlying substrate instead of painting over it. Mobile
+          hidden (no continuous hover state). */}
+      <div
+        aria-hidden
+        className="hidden md:block absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle 240px at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(251,191,36,0.42) 0%, rgba(251,191,36,0.18) 30%, rgba(251,191,36,0.05) 55%, transparent 70%)",
+          mixBlendMode: "screen",
+          // Tiny smoothing on the radial position so cursor jitter doesn't strobe.
+          transition: "background-position 80ms linear",
+        }}
+      />
     </div>
   );
 }
